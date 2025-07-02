@@ -1,5 +1,7 @@
-import { use } from "react";
 import { useEffect , useState} from "react";
+import {Container, Typography, TextField, Button, Select, MenuItem, FormControl, InputLabel, Box, Paper} from "@mui/material"
+import TaskForm from "./TaskForm";
+import TaskItem from "./TaskItem";
 
 const TaskList = () => {
 
@@ -74,46 +76,51 @@ const TaskList = () => {
 
     const handleTaskedit = (task) => {
         setEditId(task._id);
-        setForm({title: task.title, description: task.description, completed: task.completed, createdAt: task.createdAt});
+        setForm({
+            title: task.title || "",
+            description: task.description || "",
+            completed: typeof task.completed === "string" ? task.completed : "", // or convert boolean to string if needed
+            createdAt: task.createdAt
+            ? typeof task.createdAt === "string"
+                ? task.createdAt.slice(0, 10)
+                : new Date(task.createdAt).toISOString().slice(0, 10)
+            : ""
+        });
     }
 
   return (
-    <>
-        <div>
-            <h1>Task List</h1>
-            <form onSubmit={handleFormSubmit}>
-                <input type="text" name="title" value={form.title} placeholder="Add Title" onChange={handleChange} />
-                <textarea type="textarea" name="description" value={form.description} placeholder="Add Description" onChange={handleChange} />
-                <select name="completed" vlaue={form.completed} onChange={handleChange}> 
-                    <option vlaue="">Select Status</option>
-                    <option vlaue="Completed">Completed</option>
-                    <option vlaue="In Process">In Process</option>
-                    <option vlaue="Not Started">Not Started</option>
-                    <option vlaue="Skipped">Skipped</option>
-                </select>
-                <input type="date" name="createdAt" value={form.createdAt} placeholder="date" onChange={handleChange} />
-                <button type="submit">Submit</button>
-            </form>
-            {   taskList.length === 0 ? (
-                <p>Task Not Found</p>
-            ) :(
-                    taskList.map((task) => {
-                        return (
-                            <div key={task._id}>
-                                <p>{task.title}</p>
-                                <p>{task.description}</p>
-                                <p>{new Date(task.createdAt).toLocaleString()}</p>
-                                <p>Status: {task.completed}</p>
-                                <button onClick={() => handleTaskdeletion(task._id)}>Delete</button>
-                                <button onClick={() => handleTaskedit(task)}>Edit</button>
-                            </div>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "#f5f5f5", // optional, for contrast
+      }}
+    >
+        <Container maxWidth="sm" sx={{mt: 4, minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+            <Typography variant="h4" align="center" gutterBottom>Task List</Typography>
+
+                <TaskForm form={form} handleChange={handleChange} handleFormSubmit={handleFormSubmit} editId={editId} error={error}/>
+                <Box sx={{display: "flex", gap: 2, width: "100%", flexWrap: "wrap", justifyContent: "center"}}>
+                    {   taskList.length === 0 ? (
+                        <Typography align="center">Task Not Found</Typography>
+                    ) :(
+                            taskList.map((task) => {
+                                
+                                return (
+                                    
+                                        <TaskItem key={task._id} task={task} onDelete={handleTaskdeletion} OnEdit={handleTaskedit}/>
+                                    
+                                )
+                            })
                         )
-                    })
-                )
-            }
-        
-        </div>
-    </>
+                    }
+                </Box>
+
+        </Container>
+    </Box>
+    
   )  
 }
 
