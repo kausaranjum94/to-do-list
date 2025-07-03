@@ -21,8 +21,8 @@ A simple and modern To-Do List application built with the MERN stack (MongoDB, E
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/kausaranjum94/to-do-list.git
+   cd to-do-list
    ```
 
 2. **Install backend dependencies:**
